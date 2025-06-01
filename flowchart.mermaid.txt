@@ -1,3 +1,4 @@
+```mermaid
 flowchart TD
  subgraph subGraph0["Client Applications"]
         StoreFrontUI["Store Front Office UI"]
@@ -41,3 +42,4 @@ flowchart TD
     UserService -.-> RedisCache & ConfigServer & ServiceRegistry
     ProductService -.-> RedisCache & ConfigServer & ServiceRegistry
     AuthService -.-> RedisCache & ConfigServer & ServiceRegistry
+```
