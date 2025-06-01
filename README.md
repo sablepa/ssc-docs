@@ -65,47 +65,48 @@ Enable store front offices to manage:
 ## 2. System Architecture
 ### 2.1. High-Level Overview
 ```mermaid
-graph TD
-    subgraph Client Applications
-        StoreFrontUI[Store Front Office UI]
-        BackOfficeUI[Back Office UI]
-    end
-
-    subgraph API Layer
-        APIGateway[AWS API Gateway]
-    end
-
-    subgraph Core Microservices
-        UserService[User Service]
-        ProductService[Product Service]
-        InventoryService[Inventory Service]
-        OrderService[Order Service]
-        NotificationService[Notification Service]
-        ShippingService[Shipping Service]
-    end
-
-    subgraph Supporting Services
-        ConfigServer[Spring Cloud Config Server]
-        ServiceRegistry[Service Registry]
-        AuthService[Auth Service]
-    end
-
-    subgraph Data Stores
-        UserDB[(User DB)]
-        ProductDB[(Product DB)]
-        InventoryDB[(Inventory DB)]
-        OrderDB[(Order DB)]
-        RedisCache[Redis Cache]
-        SQSQueue[AWS SQS]
-    end
-
+flowchart TD
+ subgraph subGraph0["Client Applications"]
+        StoreFrontUI["Store Front Office UI"]
+        BackOfficeUI["Back Office UI"]
+  end
+ subgraph subGraph1["API Layer"]
+        APIGateway["AWS API Gateway"]
+  end
+ subgraph subGraph2["Core Microservices"]
+        UserService["User Service"]
+        ProductService["Product Service"]
+        InventoryService["Inventory Service"]
+        OrderService["Order Service"]
+        NotificationService["Notification Service"]
+        ShippingService["Shipping Service"]
+  end
+ subgraph subGraph3["Supporting Services"]
+        ConfigServer["Spring Cloud Config Server"]
+        ServiceRegistry["Service Registry"]
+        AuthService["Authentication & Authorization Service"]
+  end
+ subgraph subGraph4["Data Stores & Messaging"]
+        UserDB[("User DB - RDS")]
+        ProductDB[("Product DB - RDS")]
+        InventoryDB[("Inventory DB - RDS/DynamoDB")]
+        OrderDB[("Order DB - RDS")]
+        RedisCache["Redis Cache"]
+        SQSQueue["AWS SQS"]
+  end
     StoreFrontUI --> APIGateway
     BackOfficeUI --> APIGateway
-    APIGateway --> AuthService
-    APIGateway --> Core Microservices
-    OrderService --> InventoryService
-    OrderService --> ShippingService
-    Core Microservices --> Data Stores
-    InventoryService -.-> SQSQueue
-    OrderService -.-> SQSQueue
+    APIGateway --> AuthService & UserService & ProductService & InventoryService & OrderService & ShippingService & NotificationService
+    UserService --> UserDB
+    ProductService --> ProductDB
+    InventoryService --> InventoryDB
+    OrderService --> OrderDB & InventoryService & ShippingService & NotificationService
+    InventoryService -.-> SQSQueue & ConfigServer & ServiceRegistry
+    OrderService -.-> SQSQueue & ConfigServer & ServiceRegistry
+    ShippingService -.-> SQSQueue & ConfigServer & ServiceRegistry
+    NotificationService -.-> SQSQueue & ConfigServer & ServiceRegistry
+    UserService -.-> RedisCache & ConfigServer & ServiceRegistry
+    ProductService -.-> RedisCache & ConfigServer & ServiceRegistry
+    AuthService -.-> RedisCache & ConfigServer & ServiceRegistry
 ```
+
